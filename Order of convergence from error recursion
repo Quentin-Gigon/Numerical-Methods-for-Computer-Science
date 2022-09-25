@@ -1,0 +1,44 @@
+#ifndef RECURSIONORDER_HPP
+#define RECURSIONORDER_HPP
+
+#include <cmath>
+#include <vector>
+
+/**
+ * @brief Guesses the maximal order of convergence, using 20 iterations in default
+ * @param[in] n the number of iterations
+ * @returns the order of the method
+ */
+/* SAM_LISTING_BEGIN_1 */
+double testOrder(const unsigned int n = 20) {
+  double order = 0;
+  // TO DO: (8-6.a) Compute the order of the method using recursion (8.6.1)
+  // Use as initial error guess $e_1 = 1$ and $e_2 = 0.8$
+  // START
+  
+  
+  //2 arrays to store error values and log values
+  std::vector<double> e (n), loge (n) ;
+  
+  //set starting errors
+  e[0]=1;
+  e[1]=0.8;
+  
+  
+  
+  
+  for (int i =2; i<20; i++){
+    //compute error of the ith iterate
+    //recursion through iteration
+    e[i] = e[i-1]* sqrt(e[i-2]);
+  }
+  
+  //compute order 
+  order = (log(e[n-1])-log(e[n-2]))/(log(e[n-2])-log(e[n-3]));
+  
+  // END
+  return order;
+}
+/* SAM_LISTING_END_1 */
+
+#endif
