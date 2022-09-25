@@ -1,0 +1,89 @@
+#include <Eigen/Dense>
+
+/* @brief Solve the linear regression problem (fitting a line to data)
+ * for data points $(t_i,y_i)$, $i = 1,\dots,n$
+ * @param[in] t An $n$-dimensional vector containing one side of input data
+ * @param[in] y An $n$-dimensional vector containing the other side of input
+ * data
+ * @param[out] x The vector of parameters $(x_1,x_2)$, intercept and slope of
+ * the line fitted
+ */
+/* SAM_LISTING_BEGIN_0 */
+Eigen::VectorXd linReg(const Eigen::VectorXd &t, const Eigen::VectorXd &y) {
+  // TODO: (3-1.d) Use the method of normal equations to solve the 1D linear
+  // regression problem in least-square sense.
+  // Note: The tests anticipate the outputs in the order (alpha, beta), and not
+  // (beta, alpha).
+  
+  // START
+  
+  //get size of t 
+  int n = t.size();
+  
+  //declare and initialize A
+  Eigen::MatrixXd A = Eigen::MatrixXd::Zero(n,2);
+  for (int i=0; i<n;i++){
+    //first column of A is all 1
+    A(i,0) = 1;
+    //second column of A is ti
+    A(i,1) = t(i);
+  }
+  
+  //declare and initialize b
+  Eigen::VectorXd b = y;
+  
+  //declare and initialize ATA
+  Eigen::MatrixXd ATA = A.transpose() * A;
+  
+   //declare and initialize ATb
+  Eigen::VectorXd ATb = A.transpose() * b;
+  
+  //declare and initialize x
+  Eigen::VectorXd x = ATA.lu().solve(ATb);
+  
+  // END
+
+  return x;
+}
+/* SAM_LISTING_END_0 */
+
+/* @brief Solve the linearized exponential problem
+ * for data points $(t_i,y_i)$, $i = 1,\dots,n$
+ * @param[in] t An $n$-dimensional vector containing one side of input data
+ * @param[in] y An $n$-dimensional vector containing the other side of input
+ * data
+ * @param[out] x The vector of parameters $(x_1,x_2)$, intercept and slope of
+ * the line fitted to the linearized problem
+ */
+/* SAM_LISTING_BEGIN_1 */
+Eigen::VectorXd expFit(const Eigen::VectorXd &t, const Eigen::VectorXd &y) {
+  // TODO: (3-1.e) Implement least square estimate of alpha and beta using
+  // the previously implemented function linReg().
+  // Note: You don't need to have implemented linReg() to solve this subproblem.
+  // The tests will compile and use the master solution for linReg().
+  // Note: The tests anticipate the outputs in the order (alpha, beta), and not
+  // (beta, alpha).
+  
+  // START
+  
+  Eigen::VectorXd b = y.array().log().matrix();
+  //compute least squares
+  Eigen::VectorXd x_temp = linReg(t,b);
+  
+  //return x with exp of first value (alpha)
+  Eigen::VectorXd x_temp_exp = x_temp.array().exp().matrix();
+  
+  // Dummy code. We need this otherwise the code won't compile. 
+  Eigen::Vector2d x;
+  //first element is alpha from exp vector to eliminate the ln
+  x(0) = x_temp_exp(0);
+  //second element is beta from original vector
+  x(1) = x_temp(1);
+
+  // END
+
+  return x;
+}
+/* SAM_LISTING_END_1 */
+
+// END
